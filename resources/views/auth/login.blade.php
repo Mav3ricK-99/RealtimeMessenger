@@ -2,7 +2,7 @@
 
 @section('content')
 
-<b-container>
+<b-container class="py-4">
 
     <b-row align-h="center">
         
