@@ -1893,7 +1893,8 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       messages: [],
-      messageData: ''
+      messageData: '',
+      contactID: 2
     };
   },
   mounted: function mounted() {
@@ -1903,7 +1904,7 @@ __webpack_require__.r(__webpack_exports__);
     getMessages: function getMessages() {
       var _this = this;
 
-      axios.get('/api/messages').then(function (response) {
+      axios.get("/api/messages?contact=".concat(this.contactID)).then(function (response) {
         _this.messages = response.data;
       });
     },
@@ -1911,7 +1912,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       var params = {
-        'to': 2,
+        'to': this.contactID,
         'message': this.messageData
       };
       axios.post('/api/messages', params).then(function (response) {
@@ -1959,13 +1960,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["variant"],
+  props: {
+    variant: String,
+    conversations: Object
+  },
   data: function data() {
-    return {
-      'contact_name': 'Zukaritas',
-      'lastmessage': 'ultimo mensje xd',
-      'lastmessage_date': '4:20 AM'
-    };
+    return {};
   },
   mounted: function mounted() {}
 });
@@ -1997,11 +1997,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    return {};
+    return {
+      conversations: []
+    };
   },
-  mounted: function mounted() {}
+  mounted: function mounted() {
+    this.getConversations();
+  },
+  methods: {
+    getConversations: function getConversations() {
+      var _this = this;
+
+      axios.get('api/conversations').then(function (response) {
+        _this.conversations = response.data;
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -35353,11 +35371,11 @@ var render = function() {
             },
             [
               _c("p", { staticClass: "mb-1" }, [
-                _vm._v(_vm._s(_vm.contact_name))
+                _vm._v(_vm._s(_vm.conversations.contact_name))
               ]),
               _vm._v(" "),
               _c("p", { staticClass: "text-muted small mb-1" }, [
-                _vm._v("Tu: " + _vm._s(_vm.lastmessage))
+                _vm._v(" " + _vm._s(_vm.conversations.last_message))
               ])
             ]
           ),
@@ -35367,7 +35385,7 @@ var render = function() {
             { staticClass: "d-none d-md-block", attrs: { cols: "3" } },
             [
               _c("p", { staticClass: "text-muted small" }, [
-                _vm._v(" " + _vm._s(_vm.lastmessage_date) + " ")
+                _vm._v(" " + _vm._s(_vm.conversations.last_message_time) + " ")
               ])
             ]
           )
@@ -35421,7 +35439,12 @@ var render = function() {
       _vm._v(" "),
       _c(
         "b-list-group",
-        [_c("contact-component", { attrs: { variant: "dark" } })],
+        _vm._l(_vm.conversations, function(conversations) {
+          return _c("contact-component", {
+            key: conversations.id,
+            attrs: { conversations: conversations }
+          })
+        }),
         1
       )
     ],
@@ -47676,15 +47699,14 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 /*!*****************************************************************!*\
   !*** ./resources/js/components/ActiveConversationComponent.vue ***!
   \*****************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ActiveConversationComponent_vue_vue_type_template_id_5739cb39___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ActiveConversationComponent.vue?vue&type=template&id=5739cb39& */ "./resources/js/components/ActiveConversationComponent.vue?vue&type=template&id=5739cb39&");
 /* harmony import */ var _ActiveConversationComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ActiveConversationComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/ActiveConversationComponent.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _ActiveConversationComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _ActiveConversationComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -47714,7 +47736,7 @@ component.options.__file = "resources/js/components/ActiveConversationComponent.
 /*!******************************************************************************************!*\
   !*** ./resources/js/components/ActiveConversationComponent.vue?vue&type=script&lang=js& ***!
   \******************************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

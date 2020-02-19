@@ -14,8 +14,14 @@ class User_table_seeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Fxxdd',
+            'name' => 'Mav3rick',
             'email' => 'federieeco_99@live.com.ar',
+            'password' => bcrypt('federico')
+        ]);
+
+        User::create([
+            'name' => 'XDDDDDDDD',
+            'email' => 'fede22rieeco_99@live.com.ar',
             'password' => bcrypt('federico')
         ]);
     }

@@ -55,6 +55,7 @@
             return {
                 messages: [],
                 messageData: '',
+                contactID: 2
             };
         },
         mounted() {
@@ -63,7 +64,7 @@
         methods: {
             getMessages()
             {
-                 axios.get('/api/messages').then(
+                 axios.get(`/api/messages?contact=${this.contactID}`).then(
                  (response) => {
                      this.messages = response.data
                     });
@@ -71,7 +72,7 @@
 
             postMessage(){
                 const params = {
-                    'to': 2,
+                    'to': this.contactID,
                     'message': this.messageData,
                 }
 
