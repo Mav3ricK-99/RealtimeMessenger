@@ -13,6 +13,7 @@
              v-for= "conversations in conversations"
              :key="conversations.id"
              :conversations="conversations"
+             @click.native="selectConversation(conversations)"
             
             ></contact-component>
         </b-list-group>
@@ -37,6 +38,11 @@
                 {
                     this.conversations = response.data;
                 });
+            },
+
+            selectConversation(conversations)
+            {
+                this.$emit("conversationSelected", conversations);
             }
         }
     }

@@ -23,10 +23,11 @@
                     type="text"
                     v-model="messageData"
                     placeholder="Envia un mensaje . . ."
+                    autocomplete="off"
                     ></b-form-input>
 
                     <b-input-group-append>
-                      <b-button variant="primary" type="submit" autocomplete="off">Button</b-button>
+                      <b-button variant="primary" type="submit">Button</b-button>
                     </b-input-group-append>
                 </b-input-group>
 
@@ -39,7 +40,7 @@
 
     <b-col cols="4">
             <b-img rounded='circle' blank width='65' height='65' blank-color='#777' class="m-1"></b-img>
-            <p>Usuario Maverick</p>
+            <p>{{contactName}}</p>
         <b-form-checkbox>
                 Desactivar notificaciones
         </b-form-checkbox>
@@ -51,11 +52,15 @@
 
 <script>
     export default {
+       props:{
+           contactID: Number,
+           contactName: String,
+       },  
         data(){
             return {
                 messages: [],
                 messageData: '',
-                contactID: 2
+              
             };
         },
         mounted() {
@@ -86,6 +91,13 @@
                      
                     });
             },
+        },
+        watch:{
+            contactID(value)
+            {
+                //console.log(`contactID => ${this.contactID}`);
+                this.getMessages();
+            }
         }
     }
 </script>

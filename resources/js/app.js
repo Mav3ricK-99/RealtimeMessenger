@@ -9,6 +9,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.use(BootstrapVue)
 
+Vue.component('MessengerComponent', require('./components/MessengerComponent.vue').default);
 Vue.component('MessageConversationComponent', require('./components/MessageConversationComponent.vue').default);
 Vue.component('ContactComponent', require('./components/ContactComponent.vue').default);
 Vue.component('ContactGroupComponent', require('./components/ContactGroupComponent.vue').default);
