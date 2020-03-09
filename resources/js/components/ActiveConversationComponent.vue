@@ -55,26 +55,17 @@
        props:{
            contactID: Number,
            contactName: String,
+           messages: Array,
        },  
         data(){
             return {
-                messages: [],
                 messageData: '',
               
             };
         },
-        mounted() {
-           this.getMessages();
-        },
+        mounted() {},
         methods: {
-            getMessages()
-            {
-                 axios.get(`/api/messages?contact=${this.contactID}`).then(
-                 (response) => {
-                     this.messages = response.data
-                    });
-            },
-
+            
             postMessage(){
                 const params = {
                     'to': this.contactID,
@@ -86,12 +77,15 @@
                      if(response.data.success)
                      {
                         this.messageData = '';
-                        this.getMessages();
                      }
                      
                     });
             },
         },
+        /*
+
+        El metodo de abajo mira constantemente si hay cambios en alguna variable en especifico.
+
         watch:{
             contactID(value)
             {
@@ -99,5 +93,6 @@
                 this.getMessages();
             }
         }
+        */
     }
 </script>
