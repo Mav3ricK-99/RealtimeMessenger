@@ -4,7 +4,10 @@
         <b-row class="h-100" no-gutters>
 
             <b-col cols="4" >
-                    <contact-group-component @conversationSelected="changeConversation($event)"></contact-group-component>
+                    <contact-group-component 
+                    @conversationSelected="changeConversation($event)"
+                    :conversations = "conversations"
+                    ></contact-group-component>
             </b-col>
 
             <b-col cols="8">
@@ -13,8 +16,8 @@
                     :contactID="selectedConversation.contact_id"
                     :contactName="selectedConversation.contact_name"
                     :messages="messages"
+                    @messageCreated = "addMessage($event)"
                     >
-
                 </active-conversation-component>
             </b-col>
 
@@ -33,14 +36,17 @@ export default
             return{
                 selectedConversation: null,
                 messages: [],
+                conversations: [],
             };
         },
         mounted() {
-            Echo.channel(`ejemplo`)
+            this.getConversations();
+
+            Echo.channel(`usuario.${this.userId}`)
             .listen('MessageSent', (data) => {
                 const message = data.message;
-                message.written_by_me = (this.userId == message.from);
-                this.messages.push(message);
+                message.written_by_me = false;
+                this.addMessage(message);
                 
             });
             
@@ -64,6 +70,27 @@ export default
                 (response) => {
                     this.messages = response.data
                     });
+            },
+            addMessage(message){
+
+                const conversation = this.conversations.find((conversation) => {
+                    return conversation.contact_id == message.from || conversation.contact_id == message.to;
+                });
+
+                const author = this.userId === message.from ? 'Tu' : conversations.contact_name;
+                conversation.last_message = `${author} : ${message.message}`;
+                conversation.last_message_time = `${message.created_at}`;
+
+               if(this.selectedConversation.contact_id == message.from ||  this.selectedConversation.contact_id == message.to){
+                    this.messages.push(message);
+                }
+            },
+            getConversations()
+            {
+                axios.get('api/conversations').then((response) => 
+                {
+                    this.conversations = response.data;
+                });
             },
         }
     }

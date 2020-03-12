@@ -7,13 +7,13 @@
                 <b-img rounded='circle' blank width='65' height='65' blank-color='#777' class="m-1"></b-img>
             </b-col>   
         
-            <b-col cols="6" align-self='center' class="d-none d-md-block">
+            <b-col cols="5" align-self='center' class="d-none d-md-block">
                 <p class='mb-1'>{{ conversations.contact_name }}</p>
                 <p class="text-muted small mb-1"> {{ conversations.last_message }}</p>
             </b-col>
                             
-            <b-col cols="3" class="d-none d-md-block">
-                <p class="text-muted small"> {{ conversations.last_message_time }} </p>
+            <b-col cols="4" class="d-none d-md-block">
+                <p class="text-muted small"> {{ lastTime }} </p>
             </b-col>
                                
                                 
@@ -32,6 +32,14 @@
             return {
             };
         },
-        mounted() {}
+        mounted() {},
+        
+        computed: {
+            lastTime(){
+                return Moment(`${this.conversations.last_message_time}`, "YYYY-MM-DD hh:mm:ss")
+                .locale('es')
+                .fromNow();
+            }
+        }
     }
 </script>

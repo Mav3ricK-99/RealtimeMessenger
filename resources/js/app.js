@@ -1,6 +1,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+window.Moment = require('moment');
 
 import BootstrapVue from 'bootstrap-vue'
 

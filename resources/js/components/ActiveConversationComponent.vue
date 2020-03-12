@@ -5,20 +5,26 @@
     <b-col cols="8" class="h-100">
          
          <b-card
+         no-body
          class="h-100"
          title="Conversacion activa"
          >
  
-           <message-conversation-component v-for="messages in messages"
-                                           :key = "messages.id"
-                                           :written-by-me = "messages.written_by_me">
-                                           {{messages.message}}
-            </message-conversation-component>
+         <b-card-body class="b-card-body">
+            <message-conversation-component 
+                v-for="messages in messages"
+                :key = "messages.id"
+                :written-by-me = "messages.written_by_me">
 
-           <div slot="footer" class="h-100">   
+                {{messages.message}}
+
+            </message-conversation-component>
+         </b-card-body>
+
+          <div slot="footer" class="h-100">   
                 <b-form class="mb-0" @submit.prevent='postMessage'>
                    
-                <b-input-group class="mt-3">
+                <b-input-group>
                     <b-form-input class="text-center"
                     type="text"
                     v-model="messageData"
@@ -32,7 +38,7 @@
                 </b-input-group>
 
                 </b-form>
-            </div>
+           </div>
 
          </b-card>
 
@@ -49,6 +55,14 @@
 </b-row>
 
 </template>
+
+<style>
+    .b-card-body{
+        max-height: calc(100vh - 122px);
+        overflow-y: auto;
+    }
+
+</style>
 
 <script>
     export default {
@@ -76,12 +90,24 @@
                  (response) => {
                      if(response.data.success)
                      {
+                        const message = response.data.message;
+                        message.written_by_me = true;
+                        this.$emit('messageCreated',message);
                         this.messageData = '';
                      }
                      
                     });
             },
+            scrollToBottom(){
+                const element = document.querySelector('.b-card-body');
+                element.scrollTop = element.scrollHeight;
+            }
         },
+            //Cuando cambia una variable de la vista al renderizar.
+        updated()
+        {
+            this.scrollToBottom();
+        }
         /*
 
         El metodo de abajo mira constantemente si hay cambios en alguna variable en especifico.
