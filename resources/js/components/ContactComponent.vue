@@ -8,7 +8,9 @@
             </b-col>   
         
             <b-col cols="5" align-self='center' class="d-none d-md-block">
-                <p class='mb-1'>{{ conversations.contact_name }}</p>
+                <p class='mb-1'>
+                    <b-img rounded='circle' blank width='10' height='10' :blank-color="conversations.online ? 'green' : 'gray' " class="m-1"></b-img>
+                    {{ conversations.contact_name }}</p>
                 <p class="text-muted small mb-1"> {{ conversations.last_message }}</p>
             </b-col>
                             

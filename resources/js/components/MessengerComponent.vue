@@ -41,14 +41,25 @@ export default
         },
         mounted() {
             this.getConversations();
-
-            Echo.channel(`usuario.${this.userId}`)
+            
+            Echo.private(`usuario.${this.userId}`)
             .listen('MessageSent', (data) => {
                 const message = data.message;
                 message.written_by_me = false;
                 this.addMessage(message);
                 
             });
+
+            Echo.join('globalRoom')
+            .here(users => {
+                users.forEach((user) => this.changeStatus(user, true));
+            })
+            .joining(
+                user => this.changeStatus(user, true)
+            )
+            .leaving(
+                user => this.changeStatus(user, false)
+            )
             
         },
         
@@ -77,12 +88,12 @@ export default
                     return conversation.contact_id == message.from || conversation.contact_id == message.to;
                 });
 
-                const author = this.userId === message.from ? 'Tu' : conversations.contact_name;
+                const author = this.userId === message.from ? 'Tu' : conversation.contact_name;
                 conversation.last_message = `${author} : ${message.message}`;
                 conversation.last_message_time = `${message.created_at}`;
 
-               if(this.selectedConversation.contact_id == message.from ||  this.selectedConversation.contact_id == message.to){
-                    this.messages.push(message);
+                if(this.selectedConversation.contact_id == message.from ||  this.selectedConversation.contact_id == message.to){
+                     this.messages.push(message);
                 }
             },
             getConversations()
@@ -91,6 +102,16 @@ export default
                 {
                     this.conversations = response.data;
                 });
+            },
+
+            changeStatus(user, status){
+                const index = this.conversations.findIndex((conversation) => {
+                    return conversation.contact_id == user.id;
+                });
+                //Lo de abajo agrega una propiedad a un objeto para que Vue pueda saber si esta cambia.
+                if(index >= 0){
+                    this.$set(this.conversations[index],'online',status);
+                }
             },
         }
     }

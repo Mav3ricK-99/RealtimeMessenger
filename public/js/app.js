@@ -1992,6 +1992,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     variant: String,
@@ -2143,11 +2145,20 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     this.getConversations();
-    Echo.channel("usuario.".concat(this.userId)).listen('MessageSent', function (data) {
+    Echo["private"]("usuario.".concat(this.userId)).listen('MessageSent', function (data) {
       var message = data.message;
       message.written_by_me = false;
 
       _this.addMessage(message);
+    });
+    Echo.join('globalRoom').here(function (users) {
+      users.forEach(function (user) {
+        return _this.changeStatus(user, true);
+      });
+    }).joining(function (user) {
+      return _this.changeStatus(user, true);
+    }).leaving(function (user) {
+      return _this.changeStatus(user, false);
     });
   },
   methods: {
@@ -2169,7 +2180,7 @@ __webpack_require__.r(__webpack_exports__);
       var conversation = this.conversations.find(function (conversation) {
         return conversation.contact_id == message.from || conversation.contact_id == message.to;
       });
-      var author = this.userId === message.from ? 'Tu' : conversations.contact_name;
+      var author = this.userId === message.from ? 'Tu' : conversation.contact_name;
       conversation.last_message = "".concat(author, " : ").concat(message.message);
       conversation.last_message_time = "".concat(message.created_at);
 
@@ -2183,6 +2194,15 @@ __webpack_require__.r(__webpack_exports__);
       axios.get('api/conversations').then(function (response) {
         _this3.conversations = response.data;
       });
+    },
+    changeStatus: function changeStatus(user, status) {
+      var index = this.conversations.findIndex(function (conversation) {
+        return conversation.contact_id == user.id;
+      }); //Lo de abajo agrega una propiedad a un objeto para que Vue pueda saber si esta cambia.
+
+      if (index >= 0) {
+        this.$set(this.conversations[index], 'online', status);
+      }
     }
   }
 });
@@ -63065,9 +63085,27 @@ var render = function() {
               attrs: { cols: "5", "align-self": "center" }
             },
             [
-              _c("p", { staticClass: "mb-1" }, [
-                _vm._v(_vm._s(_vm.conversations.contact_name))
-              ]),
+              _c(
+                "p",
+                { staticClass: "mb-1" },
+                [
+                  _c("b-img", {
+                    staticClass: "m-1",
+                    attrs: {
+                      rounded: "circle",
+                      blank: "",
+                      width: "10",
+                      height: "10",
+                      "blank-color": _vm.conversations.online ? "green" : "gray"
+                    }
+                  }),
+                  _vm._v(
+                    "\n                 " +
+                      _vm._s(_vm.conversations.contact_name)
+                  )
+                ],
+                1
+              ),
               _vm._v(" "),
               _c("p", { staticClass: "text-muted small mb-1" }, [
                 _vm._v(" " + _vm._s(_vm.conversations.last_message))
