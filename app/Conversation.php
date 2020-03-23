@@ -6,8 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Conversation extends Model
 {
-       protected $appends = ['contact_name'];
+       protected $appends = ['contact_name', 'contact_image'];
        protected $primaryKey = 'conversation_id';
+
+       public function getContactImageAttribute()
+       {
+            return $this->contact()->first(['name'])->image;
+       }
 
        public function getContactNameAttribute()
        {

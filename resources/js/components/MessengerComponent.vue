@@ -4,10 +4,20 @@
         <b-row class="h-100" no-gutters>
 
             <b-col cols="4" >
-                    <contact-group-component 
-                    @conversationSelected="changeConversation($event)"
-                    :conversations = "conversations"
-                    ></contact-group-component>
+                <b-form class="my-3 mx-2">
+                    <b-form-input class="text-center"
+                    id="mensaje"
+                    v-model="querySearch"
+                    type="text"
+                    placeholder="A quien buscas? . . ."
+                    ></b-form-input>
+                </b-form>
+
+                <contact-group-component 
+                @conversationSelected="changeConversation($event)"
+                :conversations = "conversationsFiltered"
+                ></contact-group-component>
+
             </b-col>
 
             <b-col cols="8">
@@ -37,6 +47,7 @@ export default
                 selectedConversation: null,
                 messages: [],
                 conversations: [],
+                querySearch: '',
             };
         },
         mounted() {
@@ -65,8 +76,8 @@ export default
         
         methods: {
 
-            changeConversation(conversation)
-            {
+            changeConversation(conversation){
+            
                /*   console.log(conversation)
                     Selecciona el id del contacto y lo refreshea en el ActiveConversation
                */
@@ -75,8 +86,8 @@ export default
                
             },
 
-            getMessages()
-            {
+            getMessages(){
+            
                 axios.get(`/api/messages?contact=${this.selectedConversation.contact_id}`).then(
                 (response) => {
                     this.messages = response.data
@@ -96,8 +107,8 @@ export default
                      this.messages.push(message);
                 }
             },
-            getConversations()
-            {
+            getConversations(){
+            
                 axios.get('api/conversations').then((response) => 
                 {
                     this.conversations = response.data;
@@ -113,6 +124,13 @@ export default
                     this.$set(this.conversations[index],'online',status);
                 }
             },
+        },
+
+        computed: {
+            conversationsFiltered(){
+                return this.conversations.filter(
+                    (conversation) => conversation.contact_name.toLowerCase().includes(this.querySearch));
+            }
         }
     }
 </script>

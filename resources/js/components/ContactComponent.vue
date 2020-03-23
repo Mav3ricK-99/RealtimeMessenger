@@ -9,9 +9,9 @@
         
             <b-col cols="5" align-self='center' class="d-none d-md-block">
                 <p class='mb-1'>
-                    <b-img rounded='circle' blank width='10' height='10' :blank-color="conversations.online ? 'green' : 'gray' " class="m-1"></b-img>
-                    {{ conversations.contact_name }}</p>
-                <p class="text-muted small mb-1"> {{ conversations.last_message }}</p>
+                    <b-img rounded='circle' blank width='10' height='10' :blank-color="conversation.online ? 'green' : 'gray' " class="m-1"></b-img>
+                    {{ conversation.contact_name }}</p>
+                <p class="text-muted small mb-1"> {{ conversation.last_message }}</p>
             </b-col>
                             
             <b-col cols="4" class="d-none d-md-block">
@@ -27,8 +27,8 @@
 <script>
     export default {
         props:{
-            variant: String,
-            conversations: Object,
+            selected: Boolean,
+            conversation: Object,
         },
         data(){
             return {
@@ -38,9 +38,12 @@
         
         computed: {
             lastTime(){
-                return Moment(`${this.conversations.last_message_time}`, "YYYY-MM-DD hh:mm:ss")
+                return Moment(`${this.conversation.last_message_time}`, "YYYY-MM-DD hh:mm:ss")
                 .locale('es')
                 .fromNow();
+            },
+            variant(){
+                return this.selected ? 'secondary' : '';
             }
         }
     }

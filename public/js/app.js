@@ -1996,8 +1996,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    variant: String,
-    conversations: Object
+    selected: Boolean,
+    conversation: Object
   },
   data: function data() {
     return {};
@@ -2005,7 +2005,10 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {},
   computed: {
     lastTime: function lastTime() {
-      return Moment("".concat(this.conversations.last_message_time), "YYYY-MM-DD hh:mm:ss").locale('es').fromNow();
+      return Moment("".concat(this.conversation.last_message_time), "YYYY-MM-DD hh:mm:ss").locale('es').fromNow();
+    },
+    variant: function variant() {
+      return this.selected ? 'secondary' : '';
     }
   }
 });
@@ -2036,24 +2039,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     conversations: Array
   },
   data: function data() {
-    return {};
+    return {
+      selectedConversationID: null
+    };
   },
   mounted: function mounted() {},
   methods: {
-    selectConversation: function selectConversation(conversations) {
-      this.$emit("conversationSelected", conversations);
+    selectConversation: function selectConversation(conversation) {
+      this.selectedConversationID = conversation.contact_id;
+      this.$emit("conversationSelected", conversation);
     }
   }
 });
@@ -2130,6 +2129,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     userId: Number
@@ -2138,7 +2147,8 @@ __webpack_require__.r(__webpack_exports__);
     return {
       selectedConversation: null,
       messages: [],
-      conversations: []
+      conversations: [],
+      querySearch: ''
     };
   },
   mounted: function mounted() {
@@ -2203,6 +2213,15 @@ __webpack_require__.r(__webpack_exports__);
       if (index >= 0) {
         this.$set(this.conversations[index], 'online', status);
       }
+    }
+  },
+  computed: {
+    conversationsFiltered: function conversationsFiltered() {
+      var _this4 = this;
+
+      return this.conversations.filter(function (conversation) {
+        return conversation.contact_name.toLowerCase().includes(_this4.querySearch);
+      });
     }
   }
 });
@@ -63096,19 +63115,19 @@ var render = function() {
                       blank: "",
                       width: "10",
                       height: "10",
-                      "blank-color": _vm.conversations.online ? "green" : "gray"
+                      "blank-color": _vm.conversation.online ? "green" : "gray"
                     }
                   }),
                   _vm._v(
                     "\n                 " +
-                      _vm._s(_vm.conversations.contact_name)
+                      _vm._s(_vm.conversation.contact_name)
                   )
                 ],
                 1
               ),
               _vm._v(" "),
               _c("p", { staticClass: "text-muted small mb-1" }, [
-                _vm._v(" " + _vm._s(_vm.conversations.last_message))
+                _vm._v(" " + _vm._s(_vm.conversation.last_message))
               ])
             ]
           ),
@@ -63152,40 +63171,21 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "div",
-    [
-      _c(
-        "b-form",
-        { staticClass: "my-3 mx-2" },
-        [
-          _c("b-form-input", {
-            staticClass: "text-center",
-            attrs: {
-              id: "mensaje",
-              type: "text",
-              placeholder: "A quien buscas? . . ."
-            }
-          })
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "b-list-group",
-        _vm._l(_vm.conversations, function(conversations) {
-          return _c("contact-component", {
-            key: conversations.id,
-            attrs: { conversations: conversations },
-            nativeOn: {
-              click: function($event) {
-                return _vm.selectConversation(conversations)
-              }
-            }
-          })
-        }),
-        1
-      )
-    ],
+    "b-list-group",
+    _vm._l(_vm.conversations, function(conversation) {
+      return _c("contact-component", {
+        key: conversation.id,
+        attrs: {
+          conversation: conversation,
+          selected: _vm.selectedConversationID === conversation.contact_id
+        },
+        nativeOn: {
+          click: function($event) {
+            return _vm.selectConversation(conversation)
+          }
+        }
+      })
+    }),
     1
   )
 }
@@ -63275,8 +63275,31 @@ var render = function() {
             "b-col",
             { attrs: { cols: "4" } },
             [
+              _c(
+                "b-form",
+                { staticClass: "my-3 mx-2" },
+                [
+                  _c("b-form-input", {
+                    staticClass: "text-center",
+                    attrs: {
+                      id: "mensaje",
+                      type: "text",
+                      placeholder: "A quien buscas? . . ."
+                    },
+                    model: {
+                      value: _vm.querySearch,
+                      callback: function($$v) {
+                        _vm.querySearch = $$v
+                      },
+                      expression: "querySearch"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
               _c("contact-group-component", {
-                attrs: { conversations: _vm.conversations },
+                attrs: { conversations: _vm.conversationsFiltered },
                 on: {
                   conversationSelected: function($event) {
                     return _vm.changeConversation($event)
