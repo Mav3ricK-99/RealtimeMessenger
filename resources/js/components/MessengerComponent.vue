@@ -14,21 +14,20 @@
                 </b-form>
 
                 <contact-group-component 
-                @conversationSelected="changeConversation($event)"
                 :conversations = "conversationsFiltered"
-                ></contact-group-component>
+               />
 
             </b-col>
 
             <b-col cols="8">
+
                 <active-conversation-component
                     v-if="selectedConversation"
                     :contactID="selectedConversation.contact_id"
                     :contactName="selectedConversation.contact_name"
-                    :messages="messages"
                     @messageCreated = "addMessage($event)"
-                    >
-                </active-conversation-component>
+                    />
+               
             </b-col>
 
         </b-row>
@@ -44,8 +43,6 @@ export default
 
         data(){
             return{
-                selectedConversation: null,
-                messages: [],
                 conversations: [],
                 querySearch: '',
             };
@@ -75,24 +72,7 @@ export default
         },
         
         methods: {
-
-            changeConversation(conversation){
-            
-               /*   console.log(conversation)
-                    Selecciona el id del contacto y lo refreshea en el ActiveConversation
-               */
-               this.selectedConversation = conversation;
-               this.getMessages();
-               
-            },
-
-            getMessages(){
-            
-                axios.get(`/api/messages?contact=${this.selectedConversation.contact_id}`).then(
-                (response) => {
-                    this.messages = response.data
-                    });
-            },
+           
             addMessage(message){
 
                 const conversation = this.conversations.find((conversation) => {
@@ -104,7 +84,7 @@ export default
                 conversation.last_message_time = `${message.created_at}`;
 
                 if(this.selectedConversation.contact_id == message.from ||  this.selectedConversation.contact_id == message.to){
-                     this.messages.push(message);
+                     this.$store.commit('addNewMessage',message);
                 }
             },
             getConversations(){
@@ -127,6 +107,9 @@ export default
         },
 
         computed: {
+            selectedConversation(){
+                return this.$store.state.selectedConversation;
+            },
             conversationsFiltered(){
                 return this.conversations.filter(
                     (conversation) => conversation.contact_name.toLowerCase().includes(this.querySearch));

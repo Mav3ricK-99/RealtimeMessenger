@@ -69,7 +69,6 @@
        props:{
            contactID: Number,
            contactName: String,
-           messages: Array,
        },  
         data(){
             return {
@@ -77,7 +76,6 @@
               
             };
         },
-        mounted() {},
         methods: {
             
             postMessage(){
@@ -102,6 +100,12 @@
                 const element = document.querySelector('.b-card-body');
                 element.scrollTop = element.scrollHeight;
             }
+        },
+        computed:{
+            messages(){
+                return this.$store.state.messages;
+            }
+
         },
             //Cuando cambia una variable de la vista al renderizar.
         updated()
